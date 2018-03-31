@@ -1,0 +1,150 @@
+<div class="container" *ngIf="form">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="card">
+      <div class="card-header">
+        TM Challenge #2
+        <button class="btn btn-default" *ngIf="hasSaved" type="button" (click)="onClearLocalStorageClick()">Clear</button>
+      </div>
+      <div class="card-body">
+        <div class="card">
+          <div class="card-header">
+            General Information
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" placeholder="First Name" class="form-control" id="firstName" formControlName="firstName">
+              <div class="alert alert-danger" *ngIf="form.controls['firstName'].touched && !form.controls['firstName'].valid">
+                <span *ngIf="form.controls['firstName'].errors['required']">First Name is required</span>
+                <span *ngIf="form.controls['firstName'].errors['minlength']">First Name is at least 2 characters</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" placeholder="LastName" class="form-control" id="lastName" formControlName="lastName">
+              <div class="alert alert-danger" *ngIf="form.controls['lastName'].touched && !form.controls['lastName'].valid">
+                <span *ngIf="form.controls['lastName'].errors['required']">Last Name is required</span>
+                <span *ngIf="form.controls['lastName'].errors['minlength']">Last Name is at least 2 characters</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input type="date" placeholder="Date of Birth" class="form-control" id="dateOfBirth" formControlName="dateOfBirth">
+              <div class="alert alert-danger" *ngIf="form.controls['dateOfBirth'].touched && !form.controls['dateOfBirth'].valid">
+                <span *ngIf="form.controls['dateOfBirth'].errors['required']">Date of Birth is required</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card my-3">
+          <div class="card-header">
+            Contact Information
+          </div>
+          <div class="card-body">
+            <div class="card">
+              <div class="card-header">
+                Email
+              </div>
+              <div class="card-body" formArrayName="emails">
+                <div class="my-3" *ngFor="let email of getEmailControls(form); let i = index;">
+                  <div class="input-group">
+                    <input type="text" class="form-control" [formControlName]="i" [placeholder]="'Email '+(i+1)">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-danger" type="button" *ngIf="getEmailControls(form).length > 1" (click)="onRemoveEmailClick(i)">Remove</button>
+                    </div>
+                  </div>
+                  <div class="alert alert-danger" *ngIf="getEmailControls(form)[i].touched && !getEmailControls(form)[i].valid">
+                    <span *ngIf="getEmailControls(form)[i].errors['required']">This field is required</span>
+                    <br>
+                    <span *ngIf="getEmailControls(form)[i].errors['email']">Must be in valid Email format</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary my-3" type="button" (click)="onAddEmailClick()">Add Email</button>
+              </div>
+            </div>
+            <div class="card my-3">
+              <div class="card-header">
+                Phone Numbers
+              </div>
+              <div class="card-body" formArrayName="phoneNumbers">
+                <div class="my-3" *ngFor="let phone of getPhoneControls(form); let i = index;">
+                  <div class="input-group">
+                    <input appPhoneMask type="text" [formControlName]="i" class="form-control" [placeholder]="'Phone '+(i+1)">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-danger" type="button" *ngIf="getPhoneControls(form).length > 1" (click)="onRemovePhoneClick(i)">Remove</button>
+                    </div>
+                  </div>
+                  <div class="alert alert-danger" *ngIf="getPhoneControls(form)[i].touched && !getPhoneControls(form)[i].valid">
+                    <span *ngIf="getPhoneControls(form)[i].errors['required']">This field is required</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary my-3" type="button" (click)="onAddPhoneClick()">Add Phone</button>
+              </div>
+            </div>
+            <div class="card my-3">
+              <div class="card-header">
+                Addresses
+              </div>
+              <div class="card-body" formArrayName="addresses">
+                <div class="my-3" *ngFor="let address of getAddressControls(form); let i = index;">
+                  <div class="card">
+                    <div class="p-3" [formGroupName]="i">
+                      <div class="form-group">
+                        <label [for]="'street' + (i + 1)">Street</label>
+                        <input type="text" class="form-control" placeholder="Street" [id]="'street'+(i+1)" formControlName="street">
+                        <div class="alert alert-danger" *ngIf="getAddressControls(form)[i].controls['street'].touched && !getAddressControls(form)[i].controls['street'].valid">
+                          <span *ngIf="getAddressControls(form)[i].controls['street'].errors['required']">Street is required</span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label [for]="'city' + (i + 1)">City</label>
+                        <input type="text" class="form-control" placeholder="City" [id]="'city'+(i+1)" formControlName="city">
+                        <div class="alert alert-danger" *ngIf="getAddressControls(form)[i].controls['city'].touched && !getAddressControls(form)[i].controls['city'].valid">
+                          <span *ngIf="getAddressControls(form)[i].controls['city'].errors['required']">City is required</span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label [for]="'state' + (i + 1)">State</label>
+                        <input type="text" class="form-control" placeholder="State" [id]="'state'+(i+1)" formControlName="state">
+                        <div class="alert alert-danger" *ngIf="getAddressControls(form)[i].controls['state'].touched && !getAddressControls(form)[i].controls['state'].valid">
+                          <span *ngIf="getAddressControls(form)[i].controls['state'].errors['required']">State is required</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline-danger" type="button" *ngIf="getAddressControls(form).length > 1" (click)="onRemoveAddressClick(i)">Remove</button>
+                  </div>
+                </div>
+                <button class="btn btn-primary my-3" type="button" (click)="onAddAddressClick()">Add Address</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary" [disabled]="!form.valid" type="submit" data-toggle="modal" data-target="#exampleModalCenter">Submit</button>
+        <button class="btn btn-secondary" [disabled]="!form.valid" (click)="onSaveClick()" type="button">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Customer Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre>
+          {{formValue | json}}
+        </pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
